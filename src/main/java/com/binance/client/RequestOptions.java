@@ -17,7 +17,6 @@ public class RequestOptions {
     public RequestOptions(RequestOptions option) {
         this.url = option.url;
     }
-
     /**
      * Set the URL for request.
      *

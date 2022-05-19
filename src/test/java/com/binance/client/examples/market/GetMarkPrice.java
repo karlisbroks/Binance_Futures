@@ -10,6 +10,9 @@ public class GetMarkPrice {
         RequestOptions options = new RequestOptions();
         SyncRequestClient syncRequestClient = SyncRequestClient.create(PrivateConfig.API_KEY, PrivateConfig.SECRET_KEY,
                 options);
-        System.out.println(syncRequestClient.getMarkPrice(""));
+        while (true){
+            System.out.println(syncRequestClient.getMarkPrice("BTCUSDT"));
+        }
+
     }
 }

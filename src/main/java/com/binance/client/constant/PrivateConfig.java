@@ -1,4 +1,4 @@
-package com.binance.client.examples.constants;
+package com.binance.client.constant;
 
 public class PrivateConfig {
 

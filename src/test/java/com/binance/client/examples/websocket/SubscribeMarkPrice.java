@@ -10,7 +10,7 @@ public class SubscribeMarkPrice {
    
         client.subscribeMarkPriceEvent("btcusdt", ((event) -> {
             System.out.println(event);
-            client.unsubscribeAll();
+//            client.unsubscribeAll();
         }), null);
 
     }

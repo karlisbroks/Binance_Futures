@@ -2,6 +2,7 @@ package com.binance.client.examples.trade;
 
 import com.binance.client.RequestOptions;
 import com.binance.client.SyncRequestClient;
+
 import com.binance.client.examples.constants.PrivateConfig;
 import com.binance.client.model.enums.PositionSide;
 
