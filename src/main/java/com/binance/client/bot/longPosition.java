@@ -1,21 +1,18 @@
-package com.binance.client.examples.trade;
+package com.binance.client.bot;
 
 import com.binance.client.RequestOptions;
 import com.binance.client.SubscriptionClient;
 import com.binance.client.SyncRequestClient;
-
-import com.binance.client.examples.constants.PrivateConfig;
+import com.binance.client.constant.PrivateConfig;
 import com.binance.client.model.enums.*;
-import com.binance.client.model.trade.Order;
 
-import java.math.BigDecimal;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-public class PostOrder {
+public class LongPosition {
     private static double actualPrice;
     private static int closePrice;
-    private static int takeLoss;
+    public static int takeLoss;
     private static int leverage=20;
     private static int random = ThreadLocalRandom.current().nextInt(100000000, 900000000 + 1);
     private static int random1= ThreadLocalRandom.current().nextInt(100000000, 900000000 + 1);
@@ -25,13 +22,11 @@ public class PostOrder {
     private static String orderIdLoss=Integer.toString(random2);
     private static boolean isFound;
     private static boolean tradeProffit;
-    private static boolean tradeLoss;
+    public static boolean tradeLoss;
     private static String amount = "0.1";
     private static String run;
     private static int counter;
-
-
-    public static void main(String[] args) throws InterruptedException {
+    public LongPosition() throws InterruptedException {
         while (true) {
             counter=0;
             RequestOptions options = new RequestOptions();
@@ -67,12 +62,12 @@ public class PostOrder {
                 System.out.println("NEW "+counter);
                 TimeUnit.SECONDS.sleep(1);
                 counter=counter+1;
-                if (counter>=10){
-                    System.out.println(syncRequestClient.cancelAllOpenOrder("ETHUSDT"));
+                if (counter>=20){
+                    System.out.print(syncRequestClient.cancelAllOpenOrder("ETHUSDT")+" ");
                     break;
                 }
             }
-            if (counter>=10) continue;
+            if (counter>=20) continue;
             //
             //      //Set TAKE PROFFIT
             System.out.println(syncRequestClient.postOrder("ETHUSDT", OrderSide.SELL, PositionSide.LONG, OrderType.TAKE_PROFIT_MARKET, TimeInForce.GTC,
