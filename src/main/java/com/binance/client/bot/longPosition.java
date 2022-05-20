@@ -11,22 +11,22 @@ import java.util.concurrent.TimeUnit;
 
 public class LongPosition {
     private static double actualPrice;
-    private static int closePrice;
-    public static int takeLoss;
-    private static int leverage=20;
-    private static int random = ThreadLocalRandom.current().nextInt(100000000, 900000000 + 1);
-    private static int random1= ThreadLocalRandom.current().nextInt(100000000, 900000000 + 1);
-    private static int random2 = ThreadLocalRandom.current().nextInt(100000000, 900000000 + 1);
-    private static String orderId=Integer.toString(random);
-    private static String orderIdProffit=Integer.toString(random1);
-    private static String orderIdLoss=Integer.toString(random2);
+    int closePrice;
+    int takeLoss;
+    int leverage=20;
+    int random = ThreadLocalRandom.current().nextInt(100000000, 900000000 + 1);
+    int random1= ThreadLocalRandom.current().nextInt(100000000, 900000000 + 1);
+    int random2 = ThreadLocalRandom.current().nextInt(100000000, 900000000 + 1);
+    String orderId=Integer.toString(random);
+    String orderIdProfit =Integer.toString(random1);
+    String orderIdLoss=Integer.toString(random2);
     private static boolean isFound;
-    private static boolean tradeProffit;
-    public static boolean tradeLoss;
-    private static String amount = "0.1";
-    private static String run;
-    private static int counter;
-    public LongPosition() throws InterruptedException {
+    boolean tradeProfit;
+    boolean tradeLoss;
+    String amount = "0.1";
+    int counter;
+
+    public void StartLong() throws InterruptedException {
         while (true) {
             counter=0;
             RequestOptions options = new RequestOptions();
@@ -43,8 +43,8 @@ public class LongPosition {
             while (actualPrice == 0) {
                 TimeUnit.SECONDS.sleep(1);
             }
-            closePrice = (int) (actualPrice + actualPrice / leverage / 50);
-            takeLoss = (int) (actualPrice - actualPrice / leverage / 50);
+            closePrice = (int) (actualPrice + actualPrice / leverage * PrivateConfig.takeProfitValue);
+            takeLoss = (int) (actualPrice - actualPrice / leverage * PrivateConfig.takeLossValue);
             //LONG
             String postOrderRs = (syncRequestClient.postOrder("ETHUSDT", OrderSide.BUY, PositionSide.LONG, OrderType.LIMIT, TimeInForce.GTC,
                     amount,
@@ -71,35 +71,38 @@ public class LongPosition {
             //
             //      //Set TAKE PROFFIT
             System.out.println(syncRequestClient.postOrder("ETHUSDT", OrderSide.SELL, PositionSide.LONG, OrderType.TAKE_PROFIT_MARKET, TimeInForce.GTC,
-                    amount, null, null, orderIdProffit, Integer.toString(closePrice), null, NewOrderRespType.RESULT));
+                    amount, null, null, orderIdProfit, Integer.toString(closePrice), null, NewOrderRespType.RESULT));
             //SET TAKE LOSS
             System.out.println(syncRequestClient.postOrder("ETHUSDT", OrderSide.SELL, PositionSide.LONG, OrderType.STOP_MARKET, TimeInForce.GTC,
                     amount, null, null, orderIdLoss, Integer.toString(takeLoss), null, NewOrderRespType.RESULT));
             //Report
-            System.out.println("Position created!");
-            System.out.println("Actual price: " + actualPrice);
-            System.out.println("Close price: " + closePrice);
-            System.out.println("Order filled: " + isFound);
-            System.out.println("Order ID: " + orderId);
-            System.out.println("Take PROFFIT ID: " + orderIdProffit);
-            System.out.println("Take LOSS ID " + orderIdLoss);
+//            System.out.println("Position created!");
+            System.out.println("Position: " + actualPrice);
+            System.out.println("TAKE PROFIT: " + closePrice);
+            System.out.println("STOP MARKET: " + takeLoss);
+//            System.out.println("Order filled: " + isFound);
+            System.out.println("Long order ID: " + orderId);
+            System.out.println("TAKE PROFIT ID: " + orderIdProfit);
+            System.out.println("STOP MARKET ID " + orderIdLoss);
 
             while (true) {
                 String orderRs = (syncRequestClient.getOpenOrders("ETHUSDT")).toString();
-                tradeProffit = !orderRs.contains(orderIdProffit);
+                tradeProfit = !orderRs.contains(orderIdProfit);
                 tradeLoss = !orderRs.contains(orderIdLoss);
-                if (tradeProffit == true) {
+                if (tradeProfit == true) {
                     break;
                 }
                 if (tradeLoss == true) {
                     break;
                 }
-                System.out.println("Position still open");
+//                System.out.println("Position still open");
                 TimeUnit.SECONDS.sleep(1);
             }
-            System.out.println("Trade done!!!!");
-            System.out.println(syncRequestClient.cancelAllOpenOrder("ETHUSDT"));
-            System.exit(0);
+            System.out.println("------TRADE COMPLETE------");
+            syncRequestClient.cancelAllOpenOrder("ETHUSDT");
+//            System.exit(0);
+            break;
         }
+
     }
 }
